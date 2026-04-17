@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login and Registration</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>User Access</h1>
+    <p class="subtitle">Create an account or log in</p>
+
+    <section class="card">
+      <h2>Register</h2>
+      <form id="registerForm">
+        <label for="regUsername">Username</label>
+        <input id="regUsername" type="text" required />
+
+        <label for="regEmail">Email</label>
+        <input id="regEmail" type="email" required />
+
+        <label for="regPassword">Password</label>
+        <input id="regPassword" type="password" minlength="6" required />
+
+        <button type="submit">Register</button>
+      </form>
+      <p id="registerMessage" class="message"></p>
+    </section>
+
+    <section class="card">
+      <h2>Login</h2>
+      <p class="card-note">Only registered users can log in</p>
+      <form id="loginForm">
+        <label for="loginEmail">Email</label>
+        <input id="loginEmail" type="email" required />
+
+        <label for="loginPassword">Password</label>
+        <input id="loginPassword" type="password" required />
+
+        <button type="submit">Login</button>
+      </form>
+      <p id="loginMessage" class="message"></p>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
