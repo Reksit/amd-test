@@ -59,6 +59,7 @@ loginForm.addEventListener("submit", async (event) => {
 
     setMessage(loginMessage, data.message, "success");
     loginForm.reset();
+    window.location.href = `/welcome/${encodeURIComponent(data.username)}`;
   } catch (error) {
     setMessage(loginMessage, "Unable to reach server.", "error");
   }

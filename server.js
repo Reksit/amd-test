@@ -73,10 +73,17 @@ app.post("/api/login", async (req, res) => {
       return res.status(401).json({ message: "Invalid email or password." });
     }
 
-    return res.status(200).json({ message: `Welcome back, ${user.username}!` });
+    return res.status(200).json({
+      message: `Welcome back, ${user.username}!`,
+      username: user.username
+    });
   } catch (error) {
     return res.status(500).json({ message: "Server error during login." });
   }
+});
+
+app.get("/welcome/:username", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "welcome.html"));
 });
 
 app.get("*", (req, res) => {

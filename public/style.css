@@ -120,3 +120,35 @@ button:hover {
 .message.error {
   color: var(--error);
 }
+
+.welcome-card {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 28px 24px;
+}
+
+.welcome-title {
+  margin: 0 0 10px;
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  line-height: 1.05;
+}
+
+.welcome-copy {
+  margin: 0 0 22px;
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+.welcome-link {
+  display: inline-block;
+  text-decoration: none;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #ffffff;
+  padding: 11px 16px;
+  font-weight: 600;
+}
+
+.welcome-link:hover {
+  background: var(--accent-hover);
+}

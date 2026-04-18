@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <main class="container">
+    <section class="card welcome-card">
+      <p class="card-note">Login successful</p>
+      <h1 class="welcome-title">Welcome, <span id="username"></span></h1>
+      <p class="welcome-copy">You are now signed in.</p>
+      <a class="welcome-link" href="/">Back to login</a>
+    </section>
+  </main>
+
+  <script>
+    const username = decodeURIComponent(window.location.pathname.split("/").filter(Boolean).pop() || "user");
+    document.getElementById("username").textContent = username;
+  </script>
+</body>
+</html>
