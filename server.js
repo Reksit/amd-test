@@ -6,6 +6,7 @@ const bcrypt = require("bcryptjs");
 const path = require("path");
 
 const app = express();
+let isDatabaseReady = false;
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
@@ -21,7 +22,17 @@ const userSchema = new mongoose.Schema(
 
 const User = mongoose.model("User", userSchema);
 
-app.post("/api/register", async (req, res) => {
+function requireDatabase(req, res, next) {
+  if (!isDatabaseReady) {
+    return res.status(503).json({
+      message: "Service temporarily unavailable. Database connection is not ready."
+    });
+  }
+
+  return next();
+}
+
+app.post("/api/register", requireDatabase, async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
@@ -55,7 +66,7 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
-app.post("/api/login", async (req, res) => {
+app.post("/api/login", requireDatabase, async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -86,21 +97,52 @@ app.get("/welcome/:username", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "welcome.html"));
 });
 
+app.get("/healthz", (req, res) => {
+  res.status(200).json({ status: "ok", database: isDatabaseReady ? "connected" : "disconnected" });
+});
+
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-async function startServer() {
-  try {
-    await mongoose.connect(process.env.MONGODB_URI);
-    const port = process.env.PORT || 3000;
-    app.listen(port, () => {
-      console.log(`Server running on http://localhost:${port}`);
-    });
-  } catch (error) {
-    console.error("Failed to connect to MongoDB:", error.message);
-    process.exit(1);
+async function connectToMongoDB() {
+  if (!process.env.MONGODB_URI) {
+    console.error("MONGODB_URI is not set. Auth endpoints will return 503 until a DB URI is provided.");
+    return;
   }
+
+  try {
+    await mongoose.connect(process.env.MONGODB_URI, {
+      serverSelectionTimeoutMS: 5000
+    });
+    isDatabaseReady = true;
+    console.log("Connected to MongoDB.");
+  } catch (error) {
+    isDatabaseReady = false;
+    console.error("Failed to connect to MongoDB:", error.message);
+  }
+}
+
+async function startServer() {
+  const port = Number(process.env.PORT) || 8080;
+
+  app.listen(port, () => {
+    console.log(`Server running on http://localhost:${port}`);
+  });
+
+  mongoose.connection.on("disconnected", () => {
+    isDatabaseReady = false;
+  });
+
+  mongoose.connection.on("connected", () => {
+    isDatabaseReady = true;
+  });
+
+  mongoose.connection.on("error", () => {
+    isDatabaseReady = false;
+  });
+
+  await connectToMongoDB();
 }
 
 startServer();
